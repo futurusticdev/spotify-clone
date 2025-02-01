@@ -57,9 +57,12 @@ const Header = () => {
             <Download className="h-6 w-6" />
             Install App
           </button>
-          <button className="text-base font-semibold hover:scale-105 hover:text-white text-[#A7A7A7] transition px-5 py-3">
+          <Link 
+            href="/signup"
+            className="text-base font-semibold hover:scale-105 hover:text-white text-[#A7A7A7] transition px-5 py-3"
+          >
             Sign up
-          </button>
+          </Link>
           <Link 
             href="/login"
             className="bg-white text-black px-9 py-3 rounded-full font-bold hover:scale-105 transition-transform text-base"
