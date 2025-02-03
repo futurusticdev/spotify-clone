@@ -1,24 +1,22 @@
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "./globals.css"
+"use client";
 
-const inter = Inter({ subsets: ["latin"] })
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import ClientLayout from "@/components/ClientLayout";
 
-export const metadata: Metadata = {
-  title: "Spotify Clone",
-  description: "A Spotify-like interface built with Next.js",
-}
+const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" className="dark">
       <body className={`${inter.className} bg-black`}>
-        {children}
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
-  )
-} 
+  );
+}

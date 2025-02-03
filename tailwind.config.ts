@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-export default {
+const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -12,7 +12,24 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      keyframes: {
+        "spotify-bar": {
+          "0%, 100%": {
+            height: "4px",
+            opacity: ".3",
+          },
+          "50%": {
+            height: "16px",
+            opacity: "1",
+          },
+        },
+      },
+      animation: {
+        "spotify-bar": "spotify-bar 1s ease-in-out infinite",
+      },
     },
   },
   plugins: [],
-} satisfies Config;
+};
+
+export default config;

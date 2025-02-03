@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { EyeOff } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const SpotifyIcon = () => (
   <svg viewBox="0 0 1134 340" className="h-[40px]" fill="currentColor">
@@ -53,7 +55,46 @@ const SpotifyLogoIcon = () => (
   </svg>
 );
 
-const LoginPage = () => {
+export default function Page() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to login");
+      }
+
+      // Store the token
+      localStorage.setItem("token", data.token);
+
+      // Redirect to home page
+      router.push("/");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gradient-to-t from-[#000000] to-[#242424] text-white font-['CircularSp',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif]">
       {/* Main Content */}
@@ -99,7 +140,16 @@ const LoginPage = () => {
             <hr className="my-[32px] border-t border-[#292929] w-full max-w-[324px] mx-auto" />
 
             {/* Email Login Form */}
-            <form className="w-full max-w-[324px] mx-auto flex flex-col gap-[16px]">
+            <form
+              onSubmit={handleLogin}
+              className="w-full max-w-[324px] mx-auto flex flex-col gap-[16px]"
+            >
+              {error && (
+                <div className="bg-red-500/10 text-red-500 p-3 rounded text-sm">
+                  {error}
+                </div>
+              )}
+
               <div>
                 <label
                   htmlFor="email"
@@ -110,6 +160,8 @@ const LoginPage = () => {
                 <input
                   type="text"
                   id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email or username"
                   className="w-full px-[14px] py-[14px] bg-[#121212] border border-[#878787] rounded-[4px] text-white placeholder-[#6A6A6A] focus:outline-none focus:border-white text-[14px] font-medium"
                 />
@@ -124,13 +176,16 @@ const LoginPage = () => {
                 </label>
                 <div className="relative">
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
                     className="w-full px-[14px] py-[14px] bg-[#121212] border border-[#878787] rounded-[4px] text-white placeholder-[#6A6A6A] focus:outline-none focus:border-white text-[14px]"
                   />
                   <button
                     type="button"
+                    onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-[14px] top-1/2 -translate-y-1/2 text-[#6A6A6A] hover:text-white"
                   >
                     <EyeOff className="w-5 h-5" />
@@ -140,9 +195,10 @@ const LoginPage = () => {
 
               <button
                 type="submit"
-                className="w-full py-[14px] mt-[24px] rounded-[500px] font-bold bg-[#1ED760] text-black hover:scale-[1.04] transition-transform text-[14px]"
+                disabled={isLoading}
+                className="w-full py-[14px] mt-[24px] rounded-[500px] font-bold bg-[#1ED760] text-black hover:scale-[1.04] transition-transform text-[14px] disabled:opacity-50 disabled:hover:scale-100"
               >
-                Log In
+                {isLoading ? "Logging in..." : "Log In"}
               </button>
             </form>
 
@@ -158,12 +214,12 @@ const LoginPage = () => {
             <div className="text-center w-full max-w-[324px] mx-auto">
               <p className="text-[#6A6A6A] text-[14px]">
                 Don't have an account?{" "}
-                <Link
-                  href="/signup"
-                  className="text-white underline decoration-white"
+                <button
+                  onClick={() => router.push("/signup")}
+                  className="text-[#1ED760] hover:underline"
                 >
                   Sign up for Spotify
-                </Link>
+                </button>
               </p>
             </div>
           </div>
@@ -186,6 +242,4 @@ const LoginPage = () => {
       </footer>
     </div>
   );
-};
-
-export default LoginPage;
+}

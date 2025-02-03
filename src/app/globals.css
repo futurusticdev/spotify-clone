@@ -45,4 +45,29 @@
   scrollbar-color: hsla(0, 0%, 100%, .3) transparent;
 }
 
-/* Add any custom CSS here */ 
+/* Add any custom CSS here */
+
+/* Add these transition styles */
+.step-transition {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.step-enter {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.step-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.step-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.step-exit-active {
+  opacity: 0;
+  transform: translateX(-20px);
+} 

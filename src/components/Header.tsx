@@ -1,8 +1,14 @@
 "use client";
 
-import { Search, Home, Download } from "lucide-react";
+import { Search, Home, Download, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { removeToken } from "@/lib/auth";
+
+interface HeaderProps {
+  onSearch: (query: string) => void;
+  isLoggedIn: boolean;
+}
 
 const QueueIcon = () => (
   <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
@@ -10,8 +16,17 @@ const QueueIcon = () => (
   </svg>
 );
 
-const Header = () => {
+const Header = ({ onSearch, isLoggedIn }: HeaderProps) => {
   const router = useRouter();
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onSearch(e.target.value);
+  };
+
+  const handleLogout = () => {
+    removeToken();
+    router.push("/login");
+  };
 
   return (
     <header className="sticky top-0 bg-black/75 backdrop-blur-md z-10">
@@ -34,6 +49,7 @@ const Header = () => {
               type="search"
               placeholder="What do you want to play?"
               className="w-[420px] bg-[#121212] rounded-full py-3 pl-14 pr-6 text-base text-white placeholder-[#7F7F7F] focus:outline-none focus:ring-2 focus:ring-white hover:bg-[#1A1A1A] transition-colors"
+              onChange={handleSearchChange}
             />
           </div>
         </div>
@@ -50,25 +66,37 @@ const Header = () => {
             Download
           </button>
           <div className="h-8 w-px bg-[#2A2A2A]" />
-          <button
-            className="flex items-center gap-2 text-base font-semibold hover:scale-105 hover:text-white text-[#A7A7A7] transition px-5 py-3"
-            aria-label="Install App"
-          >
-            <Download className="h-6 w-6" />
-            Install App
-          </button>
-          <Link 
-            href="/signup"
-            className="text-base font-semibold hover:scale-105 hover:text-white text-[#A7A7A7] transition px-5 py-3"
-          >
-            Sign up
-          </Link>
-          <Link 
-            href="/login"
-            className="bg-white text-black px-9 py-3 rounded-full font-bold hover:scale-105 transition-transform text-base"
-          >
-            Log in
-          </Link>
+          {isLoggedIn ? (
+            <>
+              <button
+                className="flex items-center gap-2 text-base font-semibold hover:scale-105 hover:text-white text-[#A7A7A7] transition px-5 py-3"
+                onClick={handleLogout}
+              >
+                Log out
+              </button>
+              <button
+                className="bg-[#282828] text-white p-2 rounded-full hover:bg-[#3E3E3E] transition-colors"
+                aria-label="User Profile"
+              >
+                <User className="h-6 w-6" />
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/signup"
+                className="text-base font-semibold hover:scale-105 hover:text-white text-[#A7A7A7] transition px-5 py-3"
+              >
+                Sign up
+              </Link>
+              <Link
+                href="/login"
+                className="bg-white text-black px-9 py-3 rounded-full font-bold hover:scale-105 transition-transform text-base"
+              >
+                Log in
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>
